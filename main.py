@@ -54,10 +54,10 @@ def face_tracking():
             robotbit.motor_run_dual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 130)
     else:
         robotbit.motor_stop_all()
-    if tilt_servo < 80 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+    if tilt_servo < 100 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
         tilt_value = tilt_value + 4
         robotbit.servo(robotbit.Servos.S2, tilt_value)
-    elif tilt_servo > 160 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+    elif tilt_servo > 140 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
         tilt_value = tilt_value - 4
         robotbit.servo(robotbit.Servos.S2, tilt_value)
 
@@ -89,14 +89,9 @@ radio.on_received_value(on_received_value)
 
 def happy_move():
     # Happy when face recognised
-    basic.show_icon(IconNames.HAPPY)
-    robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, -130)
-    robotbit.motor_run_dual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, -130)
-    pause(1000)
-    robotbit.motor_stop_all()
-    robotbit.motor_run_dual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, 130)
-    robotbit.motor_run_dual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, 130)
-    pause(1000)
+    robotbit.motor_run_dual(robotbit.Motors.M1A, 160, robotbit.Motors.M1B, 160)
+    robotbit.motor_run_dual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
+    basic.pause(3200)
     robotbit.motor_stop_all()
 current_sound = 0
 timeout2 = 0

@@ -64,10 +64,10 @@ function face_tracking() {
         robotbit.MotorStopAll()
     }
     
-    if (tilt_servo < 80 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
+    if (tilt_servo < 100 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
         tilt_value = tilt_value + 4
         robotbit.Servo(robotbit.Servos.S2, tilt_value)
-    } else if (tilt_servo > 160 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
+    } else if (tilt_servo > 140 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
         tilt_value = tilt_value - 4
         robotbit.Servo(robotbit.Servos.S2, tilt_value)
     }
@@ -107,14 +107,9 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
 })
 function happy_move() {
     //  Happy when face recognised
-    basic.showIcon(IconNames.Happy)
-    robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, -130)
-    robotbit.MotorRunDual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, -130)
-    pause(1000)
-    robotbit.MotorStopAll()
-    robotbit.MotorRunDual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, 130)
-    robotbit.MotorRunDual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, 130)
-    pause(1000)
+    robotbit.MotorRunDual(robotbit.Motors.M1A, 160, robotbit.Motors.M1B, 160)
+    robotbit.MotorRunDual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
+    basic.pause(3200)
     robotbit.MotorStopAll()
 }
 
