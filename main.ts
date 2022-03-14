@@ -38,10 +38,10 @@ function face_tracking() {
         robotbit.MotorRunDual(robotbit.Motors.M2A, 100, robotbit.Motors.M2B, 100)
     } else if (height > 125 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
         if (pan_value > 90) {
-            robotbit.MotorRunDual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, -130)
+            robotbit.MotorRunDual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, 0)
             robotbit.MotorRunDual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, 0)
         } else if (pan_value < 50) {
-            robotbit.MotorRunDual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, 0)
+            robotbit.MotorRunDual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, -130)
             robotbit.MotorRunDual(robotbit.Motors.M1A, 0, robotbit.Motors.M1B, -130)
         } else {
             robotbit.MotorRunDual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, -130)
@@ -50,10 +50,10 @@ function face_tracking() {
         
     } else if (height < 70 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
         if (pan_value > 90) {
-            robotbit.MotorRunDual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, 130)
+            robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 0)
             robotbit.MotorRunDual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 0)
         } else if (pan_value < 50) {
-            robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 0)
+            robotbit.MotorRunDual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, 130)
             robotbit.MotorRunDual(robotbit.Motors.M1A, 0, robotbit.Motors.M1B, 130)
         } else {
             robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 130)
@@ -119,6 +119,7 @@ function happy_move() {
 }
 
 let current_sound = 0
+let timeout2 = 0
 let runaway_done2 = 0
 let happy_done2 = 0
 let behind_yes = 0
@@ -142,7 +143,6 @@ robotbit.Servo(robotbit.Servos.S2, 120)
 tilt_value = 120
 pan_value = 70
 basic.forever(function on_forever() {
-    let timeout2: number;
     
     happy_done2 = 0
     runaway_done2 = 0
@@ -163,7 +163,7 @@ basic.forever(function on_forever() {
     //  Sound Detected in front of BinBot
     if (current_sound > 1 && 60 < current_sound) {
         soundExpression.hello.playUntilDone()
-        while (timeout2 <= 3) {
+        while (timeout2 <= 8) {
             huskylens.request()
             if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
                 if (happy_done2 == 0) {
@@ -180,7 +180,7 @@ basic.forever(function on_forever() {
             } else {
                 basic.pause(1000)
                 timeout2 = timeout2 + 1
-                if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false && huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENSResultBlock) && timeout2 > 2 && runaway_done2 == 0) {
+                if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false && huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENSResultBlock) && timeout2 > 7 && runaway_done2 == 0) {
                     runaway_done2 = 1
                     runaway()
                 }
@@ -200,7 +200,7 @@ basic.forever(function on_forever() {
         robotbit.MotorRunDual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
         basic.pause(1600)
         robotbit.MotorStopAll()
-        while (timeout2 <= 10) {
+        while (timeout2 <= 8) {
             huskylens.request()
             if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
                 if (happy_done2 == 0) {
@@ -217,7 +217,7 @@ basic.forever(function on_forever() {
             } else {
                 basic.pause(500)
                 timeout2 = timeout2 + 1
-                if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false && huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENSResultBlock) && timeout2 > 2 && runaway_done2 == 0) {
+                if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false && huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENSResultBlock) && timeout2 > 7 && runaway_done2 == 0) {
                     runaway_done2 = 1
                     runaway()
                 }
@@ -234,7 +234,7 @@ basic.forever(function on_forever() {
         robotbit.MotorRunDual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
         basic.pause(700)
         robotbit.MotorStopAll()
-        while (timeout2 <= 10) {
+        while (timeout2 <= 8) {
             huskylens.request()
             if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
                 if (happy_done2 == 0) {
@@ -251,7 +251,7 @@ basic.forever(function on_forever() {
             } else {
                 basic.pause(500)
                 timeout2 = timeout2 + 1
-                if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false && huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENSResultBlock) && timeout2 > 2 && runaway_done2 == 0) {
+                if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false && huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENSResultBlock) && timeout2 > 7 && runaway_done2 == 0) {
                     runaway_done2 = 1
                     runaway()
                 }

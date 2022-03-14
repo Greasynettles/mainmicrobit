@@ -34,20 +34,20 @@ def face_tracking():
         robotbit.motor_run_dual(robotbit.Motors.M2A, 100, robotbit.Motors.M2B, 100)
     elif height > 125 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
         if pan_value > 90:
-            robotbit.motor_run_dual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, -130)
+            robotbit.motor_run_dual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, 0)
             robotbit.motor_run_dual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, 0)
         elif pan_value < 50:
-            robotbit.motor_run_dual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, 0)
+            robotbit.motor_run_dual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, -130)
             robotbit.motor_run_dual(robotbit.Motors.M1A, 0, robotbit.Motors.M1B, -130)
         else:
             robotbit.motor_run_dual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, -130)
             robotbit.motor_run_dual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, -130)
     elif height < 70 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
         if pan_value > 90:
-            robotbit.motor_run_dual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, 130)
+            robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 0)
             robotbit.motor_run_dual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 0)
         elif pan_value < 50:
-            robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 0)
+            robotbit.motor_run_dual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B,130)
             robotbit.motor_run_dual(robotbit.Motors.M1A, 0, robotbit.Motors.M1B, 130)
         else:
             robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 130)
@@ -99,6 +99,7 @@ def happy_move():
     pause(1000)
     robotbit.motor_stop_all()
 current_sound = 0
+timeout2 = 0
 runaway_done2 = 0
 happy_done2 = 0
 behind_yes = 0
@@ -123,7 +124,7 @@ tilt_value = 120
 pan_value = 70
 
 def on_forever():
-    global happy_done2, runaway_done2, right_yes, behind_yes, tilt_value, pan_value, current_sound, right, behind
+    global happy_done2, runaway_done2, right_yes, behind_yes, tilt_value, pan_value, timeout2, current_sound, right, behind
     happy_done2 = 0
     runaway_done2 = 0
     if timeout2 > 1:
@@ -141,7 +142,7 @@ def on_forever():
     # Sound Detected in front of BinBot
     if current_sound > 1 and 60 < current_sound:
         soundExpression.hello.play_until_done()
-        while timeout2 <= 3:
+        while timeout2 <= 8:
             huskylens.request()
             if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
                 if happy_done2 == 0:
@@ -155,7 +156,7 @@ def on_forever():
             else:
                 basic.pause(1000)
                 timeout2 = timeout2 + 1
-                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 2 and runaway_done2 == 0:
+                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 7 and runaway_done2 == 0:
                     runaway_done2 = 1
                     runaway()
     # Sound Detected in behind of BinBot
@@ -168,7 +169,7 @@ def on_forever():
         robotbit.motor_run_dual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
         basic.pause(1600)
         robotbit.motor_stop_all()
-        while timeout2 <= 10:
+        while timeout2 <= 8:
             huskylens.request()
             if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
                 if happy_done2 == 0:
@@ -182,7 +183,7 @@ def on_forever():
             else:
                 basic.pause(500)
                 timeout2 = timeout2 + 1
-                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 2 and runaway_done2 == 0:
+                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 7 and runaway_done2 == 0:
                     runaway_done2 = 1
                     runaway()
     elif current_sound < 1 and -60 > current_sound and behind_yes == 0 and right_yes == 1:
@@ -194,7 +195,7 @@ def on_forever():
         robotbit.motor_run_dual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
         basic.pause(700)
         robotbit.motor_stop_all()
-        while timeout2 <= 10:
+        while timeout2 <= 8:
             huskylens.request()
             if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
                 if happy_done2 == 0:
@@ -208,7 +209,7 @@ def on_forever():
             else:
                 basic.pause(500)
                 timeout2 = timeout2 + 1
-                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 2 and runaway_done2 == 0:
+                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 7 and runaway_done2 == 0:
                     runaway_done2 = 1
                     runaway()
 basic.forever(on_forever)
