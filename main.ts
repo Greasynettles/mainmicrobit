@@ -25,10 +25,10 @@ function face_tracking() {
     }
     
     if (pan_servo < 130 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
-        pan_value = pan_value + 2
+        pan_value = pan_value + 3
         robotbit.Servo(robotbit.Servos.S1, pan_value)
     } else if (pan_servo > 180 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
-        pan_value = pan_value - 2
+        pan_value = pan_value - 3
         robotbit.Servo(robotbit.Servos.S1, pan_value)
     } else if (pan_value >= 175 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
         robotbit.MotorRunDual(robotbit.Motors.M1A, 100, robotbit.Motors.M1B, 100)
@@ -48,13 +48,18 @@ function face_tracking() {
             robotbit.MotorRunDual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, -130)
         }
         
-    } else if (height < 70 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
+    } else if (height < 75 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
         if (pan_value > 90) {
             robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 0)
             robotbit.MotorRunDual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 0)
         } else if (pan_value < 50) {
             robotbit.MotorRunDual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B, 130)
             robotbit.MotorRunDual(robotbit.Motors.M1A, 0, robotbit.Motors.M1B, 130)
+        } else if (huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock) == false) {
+            robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 130)
+            robotbit.MotorRunDual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 130)
+            basic.pause(1000)
+            robotbit.MotorStopAll()
         } else {
             robotbit.MotorRunDual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 130)
             robotbit.MotorRunDual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 130)
@@ -64,11 +69,11 @@ function face_tracking() {
         robotbit.MotorStopAll()
     }
     
-    if (tilt_servo < 100 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
-        tilt_value = tilt_value + 4
+    if (tilt_servo < 90 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
+        tilt_value = tilt_value + 2
         robotbit.Servo(robotbit.Servos.S2, tilt_value)
-    } else if (tilt_servo > 140 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
-        tilt_value = tilt_value - 4
+    } else if (tilt_servo > 160 && huskylens.isAppear(1, HUSKYLENSResultType_t.HUSKYLENSResultBlock)) {
+        tilt_value = tilt_value - 2
         robotbit.Servo(robotbit.Servos.S2, tilt_value)
     }
     
@@ -144,11 +149,13 @@ basic.forever(function on_forever() {
     if (timeout2 > 1) {
         basic.showIcon(IconNames.Asleep)
         soundExpression.sad.playUntilDone()
+        robotbit.Servo(robotbit.Servos.S2, 0)
+        robotbit.Servo(robotbit.Servos.S1, 70)
+        basic.pause(2000)
         right_yes = 0
         behind_yes = 0
         tilt_value = 70
         pan_value = 70
-        robotbit.Servo(robotbit.Servos.S1, 70)
         robotbit.Servo(robotbit.Servos.S2, 70)
     }
     

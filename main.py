@@ -21,10 +21,10 @@ def face_tracking():
         tilt_servo = huskylens.readeBox_index(1, 1, Content1.Y_CENTER)
         height = huskylens.readeBox_index(1, 1, Content1.HEIGHT)
     if pan_servo < 130 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
-        pan_value = pan_value + 2
+        pan_value = pan_value + 3
         robotbit.servo(robotbit.Servos.S1, pan_value)
     elif pan_servo > 180 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
-        pan_value = pan_value - 2
+        pan_value = pan_value - 3
         robotbit.servo(robotbit.Servos.S1, pan_value)
     elif pan_value >= 175 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
         robotbit.motor_run_dual(robotbit.Motors.M1A, 100, robotbit.Motors.M1B, 100)
@@ -42,23 +42,28 @@ def face_tracking():
         else:
             robotbit.motor_run_dual(robotbit.Motors.M1A, -130, robotbit.Motors.M1B, -130)
             robotbit.motor_run_dual(robotbit.Motors.M2A, -130, robotbit.Motors.M2B, -130)
-    elif height < 70 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+    elif height < 75 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
         if pan_value > 90:
             robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 0)
             robotbit.motor_run_dual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 0)
         elif pan_value < 50:
             robotbit.motor_run_dual(robotbit.Motors.M2A, 0, robotbit.Motors.M2B,130)
             robotbit.motor_run_dual(robotbit.Motors.M1A, 0, robotbit.Motors.M1B, 130)
+        elif huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False:
+             robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 130)
+             robotbit.motor_run_dual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 130)
+             basic.pause(1000)
+             robotbit.motor_stop_all()
         else:
             robotbit.motor_run_dual(robotbit.Motors.M2A, 130, robotbit.Motors.M2B, 130)
             robotbit.motor_run_dual(robotbit.Motors.M1A, 130, robotbit.Motors.M1B, 130)
     else:
         robotbit.motor_stop_all()
-    if tilt_servo < 100 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
-        tilt_value = tilt_value + 4
+    if tilt_servo < 90 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+        tilt_value = tilt_value + 2
         robotbit.servo(robotbit.Servos.S2, tilt_value)
-    elif tilt_servo > 140 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
-        tilt_value = tilt_value - 4
+    elif tilt_servo > 160 and huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+        tilt_value = tilt_value - 2
         robotbit.servo(robotbit.Servos.S2, tilt_value)
 
 def on_received_value(name, value):
@@ -125,11 +130,13 @@ def on_forever():
     if timeout2 > 1:
         basic.show_icon(IconNames.ASLEEP)
         soundExpression.sad.play_until_done()
+        robotbit.servo(robotbit.Servos.S2, 0)
+        robotbit.servo(robotbit.Servos.S1, 70)
+        basic.pause(2000)
         right_yes = 0
         behind_yes = 0
         tilt_value = 70
         pan_value = 70
-        robotbit.servo(robotbit.Servos.S1, 70)
         robotbit.servo(robotbit.Servos.S2, 70)
     basic.show_icon(IconNames.ASLEEP)
     timeout2 = 0
