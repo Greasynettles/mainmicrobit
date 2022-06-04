@@ -67,29 +67,78 @@ def face_tracking():
         robotbit.servo(robotbit.Servos.S2, tilt_value)
 
 def on_received_value(name, value):
-    global rxed, rxed2, behind, right, rxdnum, right_yes, current_state, behind_yes
+    global rxed, rxed2, rxed3, rxed4, behind, right, rxdnum, right_yes, current_state, behind_yes, front_yes, left_yes, front, left
     rxed = "" + name + "=" + ("" + str(value))
     rxed2 = "" + name + "=" + ("" + str(value))
+    rxed3 = "" + name + "=" + ("" + str(value))
+    rxed4 = "" + name + "=" + ("" + str(value))
     if rxed.includes("behind"):
         behind = parse_float(rxed.substr(7, 3))
     elif rxed.includes("right"):
         right = parse_float(rxed.substr(6, 3))
+    elif rxed.includes("left"):
+        left = parse_float(rxed.substr(6, 3))
+    elif rxed.includes("front"):
+        front = parse_float(rxed.substr(6, 3))
     if rxed2.includes("behind"):
-        behind = parse_float(rxed2.substr(7, 3))
+        behind = parse_float(rxed.substr(7, 3))
     elif rxed2.includes("right"):
-        right = parse_float(rxed2.substr(6, 3))
-    serial.write_value("Behind", behind)
-    serial.write_value("Right", right)
-    if behind < right:
+        right = parse_float(rxed.substr(6, 3))
+    elif rxed2.includes("left"):
+        left = parse_float(rxed.substr(6, 3))
+    elif rxed2.includes("front"):
+        front = parse_float(rxed.substr(6, 3))
+    if rxed3.includes("behind"):
+        behind = parse_float(rxed.substr(7, 3))
+    elif rxed3.includes("right"):
+        right = parse_float(rxed.substr(6, 3))
+    elif rxed3.includes("left"):
+        left = parse_float(rxed.substr(6, 3))
+    elif rxed3.includes("front"):
+        front = parse_float(rxed.substr(6, 3))
+    if rxed4.includes("behind"):
+        behind = parse_float(rxed.substr(7, 3))
+    elif rxed4.includes("right"):
+        right = parse_float(rxed.substr(6, 3))
+    elif rxed4.includes("left"):
+        left = parse_float(rxed.substr(6, 3))
+    elif rxed4.includes("front"):
+        front = parse_float(rxed.substr(6, 3))
+
+
+    serial.write_value("front", front)
+    serial.write_value("right", right)
+    serial.write_value("behind", behind)
+    serial.write_value("left", left)
+    
+    if behind < right and front < right and left < right :
         rxdnum = right
         right_yes = 1
-        current_state = "Right"
-    elif behind > right:
+        behind_yes = 0
+        left_yes = 0
+        front_yes = 0
+    elif (behind > right) and (behind > left) and (behind > front):
         rxdnum = behind
         behind_yes = 1
-        current_state = "Behind"
-    else:
-        basic.pause(100)
+        right_yes = 0
+        left_yes = 0
+        front_yes = 0
+    elif left > front and left > behind and left > right:
+        rxdnum = left
+        left_yes = 1
+        behind_yes = 0
+        right_yes = 0
+        front_yes = 0
+    elif front > right and front > left and front > behind:
+        rxdnum = front
+        front_yes = 1
+        behind_yes = 0
+        right_yes = 0
+        left_yes = 0
+    serial.write_value("front", front_yes)
+    serial.write_value("right", right_yes)
+    serial.write_value("behind", behind_yes)
+    serial.write_value("left", left_yes)
 radio.on_received_value(on_received_value)
 
 def happy_move():
@@ -98,16 +147,21 @@ def happy_move():
     robotbit.motor_run_dual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
     basic.pause(3200)
     robotbit.motor_stop_all()
-current_sound = 0
 timeout2 = 0
 runaway_done2 = 0
 happy_done2 = 0
 behind_yes = 0
 current_state = ""
 right_yes = 0
+left_yes = 0
+front_yes = 0
 rxdnum = 0
 right = 0
 behind = 0
+left = 0
+front = 0
+rxed4 = ""
+rxed3 = ""
 rxed2 = ""
 rxed = ""
 height = 0
@@ -124,25 +178,31 @@ tilt_value = 120
 pan_value = 70
 
 def on_forever():
-    global happy_done2, runaway_done2, right_yes, behind_yes, tilt_value, pan_value, timeout2, current_sound, right, behind
+    global happy_done2, runaway_done2, right_yes, behind_yes, left_yes, front_yes, tilt_value, pan_value, timeout2, right, behind, left, front
     happy_done2 = 0
     runaway_done2 = 0
     if timeout2 > 1:
         basic.show_icon(IconNames.ASLEEP)
-        soundExpression.sad.play_until_done()
         robotbit.servo(robotbit.Servos.S2, 0)
         robotbit.servo(robotbit.Servos.S1, 70)
-        basic.pause(2000)
+        soundExpression.sad.play_until_done()
         right_yes = 0
         behind_yes = 0
+        left_yes = 0
+        front_yes = 0
         tilt_value = 70
         pan_value = 70
         robotbit.servo(robotbit.Servos.S2, 70)
     basic.show_icon(IconNames.ASLEEP)
     timeout2 = 0
-    current_sound = input.sound_level() - rxdnum
     # Sound Detected in front of BinBot
-    if current_sound > 1 and 60 < current_sound:
+    if front_yes == 1:
+        front_yes = 0
+        soundExpression.giggle.play_until_done()
+        right = 0
+        behind = 0
+        left = 0
+        behind = 0
         soundExpression.hello.play_until_done()
         while timeout2 <= 8:
             huskylens.request()
@@ -162,10 +222,12 @@ def on_forever():
                     runaway_done2 = 1
                     runaway()
     # Sound Detected in behind of BinBot
-    if current_sound < 1 and -60 > current_sound and behind_yes == 1 and right_yes == 0:
-        current_sound = 0
+    if  behind_yes == 1:
+        behind_yes = 0
         soundExpression.giggle.play_until_done()
         right = 0
+        behind = 0
+        left = 0
         behind = 0
         robotbit.motor_run_dual(robotbit.Motors.M1A, 160, robotbit.Motors.M1B, 160)
         robotbit.motor_run_dual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
@@ -188,13 +250,45 @@ def on_forever():
                 if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 7 and runaway_done2 == 0:
                     runaway_done2 = 1
                     runaway()
-    elif current_sound < 1 and -60 > current_sound and behind_yes == 0 and right_yes == 1:
-        current_sound = 0
+    #Sound Right of Binbot
+    elif right_yes == 1:
+        right_yes = 0
         soundExpression.giggle.play_until_done()
         right = 0
         behind = 0
+        left = 0
+        behind = 0
         robotbit.motor_run_dual(robotbit.Motors.M1A, 160, robotbit.Motors.M1B, 160)
         robotbit.motor_run_dual(robotbit.Motors.M2A, -160, robotbit.Motors.M2B, -160)
+        basic.pause(700)
+        robotbit.motor_stop_all()
+        while timeout2 <= 8:
+            huskylens.request()
+            if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+                if happy_done2 == 0:
+                    soundExpression.hello.play_until_done()
+                    happy_move()
+                    happy_done2 = 1
+                timeout2 = 0
+                basic.show_icon(IconNames.HAPPY)
+                while huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK):
+                    face_tracking()
+            else:
+                basic.pause(500)
+                timeout2 = timeout2 + 1
+                if huskylens.is_appear(1, HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) == False and huskylens.isAppear_s(HUSKYLENSResultType_t.HUSKYLENS_RESULT_BLOCK) and timeout2 > 7 and runaway_done2 == 0:
+                    runaway_done2 = 1
+                    runaway()
+    #Sound Left of Binbot
+    elif left_yes == 1:
+        left_yes = 0
+        soundExpression.giggle.play_until_done()
+        right = 0
+        behind = 0
+        left = 0
+        behind = 0
+        robotbit.motor_run_dual(robotbit.Motors.M1A, -160, robotbit.Motors.M1B, -160)
+        robotbit.motor_run_dual(robotbit.Motors.M2A, 160, robotbit.Motors.M2B, 160)
         basic.pause(700)
         robotbit.motor_stop_all()
         while timeout2 <= 8:
